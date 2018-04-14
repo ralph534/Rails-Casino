@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  poker_round: one
+  card1_id: 1
+  card2_id: 1
+  user: one
+  wager: 1
+
+two:
+  poker_round: two
+  card1_id: 1
+  card2_id: 1
+  user: two
+  wager: 1

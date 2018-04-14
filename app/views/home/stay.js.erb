@@ -1,9 +1,10 @@
-$('#message').append("<%= @winner %>");
-<% if !@cards.nil? %>
-  <% @cards.each do |card| %>
-    $('.dealer-hand').append("<%= j (image_tag card.avatar_file_name) %>");
-  <% end %>
+<% if @card %>
+  $('.player-hand').append("<%= j (image_tag @card.avatar_file_name) %>");
 <% end %>
+<% @cards.each do |card| %>
+  $('.dealer-hand').append("<%= j (image_tag card.avatar_file_name) %>");
+<% end %>
+$('#message').append("<%= @winner %>");
 $('.play-again').css('visibility', 'visible');
 $('#hit').css('visibility', 'hidden');
 $('#stay').css('visibility', 'hidden');

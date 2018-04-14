@@ -41,6 +41,10 @@ class User < ApplicationRecord
     self.balance = 10000
   end 
 
+  def blackjack_game
+    BlackjackGame.find(self.game_id) if self.game_id
+  end
+
   def validate_email
     self.email_confirmed = true
     self.confirm_token = nil

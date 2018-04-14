@@ -1,1 +1,11 @@
 $('.player-hand').append("<%= j (image_tag @card.avatar_file_name) %>");
+
+<% if @cards %>
+  <% @cards.each do |card| %>
+    $('.dealer-hand').append("<%= j (image_tag card.avatar_file_name) %>");
+  <% end %>
+$('#message').append("<%= @winner %>");
+$('.play-again').css('visibility', 'visible');
+$('#hit').css('visibility', 'hidden');
+$('#stay').css('visibility', 'hidden');
+<% end %>

@@ -1,2 +1,0 @@
-class PokerRound < ApplicationRecord
-end

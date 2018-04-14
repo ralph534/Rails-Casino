@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  blackjack_game: one
+  card1_id: 1
+  card2_id: 1
+  holder: MyString
+
+two:
+  blackjack_game: two
+  card1_id: 1
+  card2_id: 1
+  holder: MyString

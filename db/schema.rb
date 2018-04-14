@@ -10,10 +10,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180411022159) do
+ActiveRecord::Schema.define(version: 20180414001653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "blackjack_games", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "wager", default: 1
+    t.string "winner"
+    t.index ["game_id"], name: "index_blackjack_games_on_game_id"
+    t.index ["user_id"], name: "index_blackjack_games_on_user_id"
+  end
+
+  create_table "blackjack_hands", force: :cascade do |t|
+    t.bigint "blackjack_game_id"
+    t.integer "card1_id"
+    t.integer "card2_id"
+    t.string "holder"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "wager"
+    t.integer "value"
+    t.integer "card3_id"
+    t.integer "card4_id"
+    t.integer "card5_id"
+    t.integer "card6_id"
+    t.integer "card7_id"
+    t.index ["blackjack_game_id"], name: "index_blackjack_hands_on_blackjack_game_id"
+  end
+
+  create_table "blackjack_moves", force: :cascade do |t|
+    t.bigint "user_id"
+    t.boolean "stay"
+    t.bigint "card_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "blackjack_hand_id"
+    t.index ["blackjack_hand_id"], name: "index_blackjack_moves_on_blackjack_hand_id"
+    t.index ["card_id"], name: "index_blackjack_moves_on_card_id"
+    t.index ["user_id"], name: "index_blackjack_moves_on_user_id"
+  end
 
   create_table "cards", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -43,6 +83,12 @@ ActiveRecord::Schema.define(version: 20180411022159) do
     t.index ["user_id", "friend_user_id"], name: "index_friendships_on_user_id_and_friend_user_id", unique: true
   end
 
+  create_table "games", force: :cascade do |t|
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "invitations", force: :cascade do |t|
     t.integer "sender_id"
     t.integer "recipient_id"
@@ -65,22 +111,7 @@ ActiveRecord::Schema.define(version: 20180411022159) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "poker_rooms", force: :cascade do |t|
-    t.integer "player_count"
-    t.integer "player1"
-    t.integer "player2"
-    t.integer "player3"
-    t.integer "player4"
-    t.integer "player5"
-    t.integer "player6"
-    t.integer "player7"
-    t.integer "player8"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "current_round"
-  end
-
-  create_table "poker_rounds", force: :cascade do |t|
+  create_table "poker_games", force: :cascade do |t|
     t.integer "player1"
     t.integer "player2"
     t.integer "player3"
@@ -94,6 +125,44 @@ ActiveRecord::Schema.define(version: 20180411022159) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "poker_room_id"
+  end
+
+  create_table "poker_hands", force: :cascade do |t|
+    t.bigint "poker_round_id"
+    t.integer "card1_id"
+    t.integer "card2_id"
+    t.bigint "user_id"
+    t.integer "wager"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["poker_round_id"], name: "index_poker_hands_on_poker_round_id"
+    t.index ["user_id"], name: "index_poker_hands_on_user_id"
+  end
+
+  create_table "poker_moves", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "poker_game_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "betting_round"
+    t.string "move"
+    t.index ["poker_game_id"], name: "index_poker_moves_on_poker_game_id"
+    t.index ["user_id"], name: "index_poker_moves_on_user_id"
+  end
+
+  create_table "poker_rooms", force: :cascade do |t|
+    t.integer "player_count"
+    t.integer "player1"
+    t.integer "player2"
+    t.integer "player3"
+    t.integer "player4"
+    t.integer "player5"
+    t.integer "player6"
+    t.integer "player7"
+    t.integer "player8"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "current_round"
   end
 
   create_table "private_messages", force: :cascade do |t|
@@ -118,7 +187,20 @@ ActiveRecord::Schema.define(version: 20180411022159) do
     t.boolean "online"
     t.string "remember_digest"
     t.integer "current_room"
+    t.bigint "game_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["game_id"], name: "index_users_on_game_id"
   end
 
+  add_foreign_key "blackjack_games", "games"
+  add_foreign_key "blackjack_games", "users"
+  add_foreign_key "blackjack_hands", "blackjack_games"
+  add_foreign_key "blackjack_moves", "blackjack_hands"
+  add_foreign_key "blackjack_moves", "cards"
+  add_foreign_key "blackjack_moves", "users"
+  add_foreign_key "poker_hands", "poker_games", column: "poker_round_id"
+  add_foreign_key "poker_hands", "users"
+  add_foreign_key "poker_moves", "poker_games"
+  add_foreign_key "poker_moves", "users"
+  add_foreign_key "users", "games"
 end

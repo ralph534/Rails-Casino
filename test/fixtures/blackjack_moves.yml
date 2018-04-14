@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  stay: false
+  card: one
+
+two:
+  user: two
+  stay: false
+  card: two
