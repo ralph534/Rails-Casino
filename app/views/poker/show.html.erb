@@ -1,15 +1,14 @@
-<%= render 'messages/index' %>
+<div class="pot" id="pot">
+</div>
 
 <div class="poker-table">
   <div class="flop">
   </div>
-  <% if @current_user_hand %>
-    <div class="poker-hand">
-      <% @current_user_hand.hand.each do |c| %>
-        <%= image_tag c.avatar_file_name %>
-      <% end %>
-    </div>
-  <% end %>
+  <div class="poker-hand">
+    <% @cards.each do |c| %>
+      <%= image_tag c.avatar_file_name %>
+    <% end %>
+  </div>
 </div>
 
 <%= render 'footer' %>

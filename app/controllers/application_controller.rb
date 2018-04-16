@@ -6,7 +6,5 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
-  $games = {}
-
   include SessionsHelper
 end

@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  deck: one
+  poker_game: one
+  drawn: false
+
+two:
+  deck: two
+  poker_game: two
+  drawn: false

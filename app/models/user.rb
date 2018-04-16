@@ -9,6 +9,7 @@ class User < ApplicationRecord
                     uniqueness: { case_sensitive: false }, on: :create
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, on: :create
+  has_many :poker_hands, class_name: 'PokerHand'
   has_many :messages
   has_many :private_messages
   has_many :friend_requests, dependent: :destroy
@@ -43,6 +44,16 @@ class User < ApplicationRecord
 
   def blackjack_game
     BlackjackGame.find(self.game_id) if self.game_id
+  end
+
+  def current_poker_game
+    room = PokerRoom.find(self.current_room)
+    game_id = room.current_poker_game_id
+    PokerGame.find(game_id)
+  end
+
+  def poker_moves
+    PokerMove.where(user_id: self.id)
   end
 
   def validate_email

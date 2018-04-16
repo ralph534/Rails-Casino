@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180414001653) do
+ActiveRecord::Schema.define(version: 20180415154117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "betting_rounds", force: :cascade do |t|
+    t.bigint "poker_game_id"
+    t.integer "round_number"
+    t.string "player_1_decision"
+    t.string "player_2_decision"
+    t.string "player_3_decision"
+    t.string "player_4_decision"
+    t.string "player_5_decision"
+    t.string "player_6_decision"
+    t.string "player_7_decision"
+    t.string "player_8_decision"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["poker_game_id"], name: "index_betting_rounds_on_poker_game_id"
+  end
 
   create_table "blackjack_games", force: :cascade do |t|
     t.bigint "game_id"
@@ -68,6 +84,23 @@ ActiveRecord::Schema.define(version: 20180414001653) do
     t.integer "straight_id"
   end
 
+  create_table "deck_cards", force: :cascade do |t|
+    t.bigint "deck_id"
+    t.bigint "poker_game_id"
+    t.boolean "drawn"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "card_id"
+    t.index ["deck_id"], name: "index_deck_cards_on_deck_id"
+    t.index ["poker_game_id"], name: "index_deck_cards_on_poker_game_id"
+  end
+
+  create_table "decks", force: :cascade do |t|
+    t.integer "poker_game_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "friend_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -120,11 +153,17 @@ ActiveRecord::Schema.define(version: 20180414001653) do
     t.integer "player6"
     t.integer "player7"
     t.integer "player8"
-    t.integer "pot"
+    t.integer "pot", default: 0
     t.integer "winner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "poker_room_id"
+    t.integer "flop_1"
+    t.integer "flop_2"
+    t.integer "flop_3"
+    t.integer "flop_4"
+    t.integer "flop_5"
+    t.integer "current_turn", default: 0
   end
 
   create_table "poker_hands", force: :cascade do |t|
@@ -135,6 +174,7 @@ ActiveRecord::Schema.define(version: 20180414001653) do
     t.integer "wager"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "poker_game_id"
     t.index ["poker_round_id"], name: "index_poker_hands_on_poker_round_id"
     t.index ["user_id"], name: "index_poker_hands_on_user_id"
   end
@@ -146,6 +186,7 @@ ActiveRecord::Schema.define(version: 20180414001653) do
     t.datetime "updated_at", null: false
     t.integer "betting_round"
     t.string "move"
+    t.integer "raise_amt"
     t.index ["poker_game_id"], name: "index_poker_moves_on_poker_game_id"
     t.index ["user_id"], name: "index_poker_moves_on_user_id"
   end
@@ -162,7 +203,7 @@ ActiveRecord::Schema.define(version: 20180414001653) do
     t.integer "player8"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "current_round"
+    t.integer "current_poker_game_id"
   end
 
   create_table "private_messages", force: :cascade do |t|
@@ -188,16 +229,21 @@ ActiveRecord::Schema.define(version: 20180414001653) do
     t.string "remember_digest"
     t.integer "current_room"
     t.bigint "game_id"
+    t.boolean "turn", default: false
+    t.integer "poker_game"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["game_id"], name: "index_users_on_game_id"
   end
 
+  add_foreign_key "betting_rounds", "poker_games"
   add_foreign_key "blackjack_games", "games"
   add_foreign_key "blackjack_games", "users"
   add_foreign_key "blackjack_hands", "blackjack_games"
   add_foreign_key "blackjack_moves", "blackjack_hands"
   add_foreign_key "blackjack_moves", "cards"
   add_foreign_key "blackjack_moves", "users"
+  add_foreign_key "deck_cards", "decks"
+  add_foreign_key "deck_cards", "poker_games"
   add_foreign_key "poker_hands", "poker_games", column: "poker_round_id"
   add_foreign_key "poker_hands", "users"
   add_foreign_key "poker_moves", "poker_games"

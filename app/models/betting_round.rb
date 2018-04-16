@@ -1,0 +1,2 @@
+class BettingRound < ApplicationRecord
+end

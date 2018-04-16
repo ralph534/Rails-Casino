@@ -1,5 +1,4 @@
 class BlackjackGame < ApplicationRecord
-  # before_create :deal_hands
   belongs_to :game
   belongs_to :user
   has_many :hands, class_name: 'BlackjackHand'

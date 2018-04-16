@@ -1,6 +1,6 @@
 class PokerController < ApplicationController
   respond_to :html, :js
-  before_action :get_messages
+  # before_action :get_messages
 
   def create
     invitation = Invitation.find(params[:invitation])
@@ -10,212 +10,127 @@ class PokerController < ApplicationController
                  player6: players[5], player7: players[6], player8: players[7])
     if poker_room.save 
       room_id = poker_room.id
-      new_game = PokerGame.new(players, room_id)
-      players.each { |player| User.find(player).update!(current_room: room_id) }
-
-      room_url = poker_path(id: room_id, round: new_game.round.id)
-      ActionCable.server.broadcast "invitations_channel_#{invitation.sender_id}",
-                                    url: room_url
-      redirect_to room_url
+      game = PokerGame.new(pot: 0, poker_room_id: room_id, player1: players[0], player2: players[1], player3: players[2],
+                         player4: players[3], player4: players[4], player5: players[5],
+                         player6: players[6], player7: players[7], player8: players[8])
+      if game.save 
+        poker_room.update!(current_poker_game_id: game.id)
+      end
+      players.each do |player|
+        User.find(player).update_attribute(:current_room, room_id)
+      end
     end
+    ActionCable.server.broadcast "invitations_channel_#{invitation.sender_id}",
+                                  url: poker_path
+    redirect_to poker_path
   end
 
   def show
-    round = $games[params[:round].to_i]
-    @flop = round.flop
-    @lobby = round.lobby
-    @lobby[0].turn = true
-    @current_user = round.current_player(current_user.id)
-    @current_user_turn = @current_user.turn
-    @current_user_hand = @current_user.hand
-    # ActionCable.server.broadcast "room_channel_#{current_room}_#{current_id}",
-    #                               turn: current_round.current_player(current_user.id).turn
+    room = current_user.current_room
+    # current_user.update!(current_room: 
+    game = PokerGame.find_by(poker_room_id: room)
+    current_user.update!(poker_game: game)
+    # @flop = [game.flop_1, game.flop_2, game.flop_3,
+    #          game.flop_4, game.flop_5]
+    # @lobby = game.players
+    game.first_player_turn
+    user_hand = game.poker_hands.find_by(user_id: current_user.id)
+    @cards = [Card.find(user_hand.card1_id), Card.find(user_hand.card2_id)]
+    @current_user_turn = current_user.turn
   end
-
-  # def call
-  #   current_player.current_bet = current_game.round.pot
-  # end
 
   def bet
-    player = current_round.current_player(current_user.id)
-    current_id = current_user.id
-    if player.turn
-      if params[:bet]
-        player.current_bet += params[:bet].to_i
-      else 
-        player.turn = false
-        current_round.next_turn
-        next_id = current_round.current_players_user_id
-        ActionCable.server.broadcast "room_channel_#{current_room}_#{next_id}",
-                                      turn: true
-        ActionCable.server.broadcast "room_channel_#{current_room}_#{current_id}",
-                                      not_turn: true
-      end
+    room = current_user.current_room
+    game = PokerGame.find_by(poker_room_id: room)
+    round = game.current_betting_round
+    if params[:bet]
+      room = current_user.current_room
+      bet = params[:bet].to_i
+      sum = game.pot + bet
+      game.update!(pot: sum)
+      ActionCable.server.broadcast "room_channel_#{room}",
+                                    pot: game.pot 
+      PokerMove.create(user_id: current_user.id, poker_game_id: game.id, betting_round: round.id,
+        move: 'raise', raise_amt: bet)
+    else 
+      PokerMove.create(user_id: current_user.id, poker_game_id: game.id, betting_round: round.id,
+        move: 'end betting', raise_amt: 0)
+      better_idx = game.current_turn
+      game.next_turn
+      ActionCable.server.broadcast "room_channel_#{game.players[game.current_turn]}",
+                                    turn: true
+      ActionCable.server.broadcast "room_channel_#{game.players[better_idx]}",
+                                    not_turn: true                                         
     end
-  end
-
-  def flop
-    @flop = current_round.flop
   end
 
   def call
-    ActionCable.server.broadcast "room_channel_#{current_room}",
-                                  call: true
+    room = current_user.current_room
+    game = PokerGame.find_by(poker_room_id: room)
+    round = game.current_betting_round
+    PokerMove.create(user_id: current_user.id, poker_game_id: game.id, betting_round: round.id,
+        move: 'call', raise_amt: 0) 
+    caller_idx = game.current_turn
+    game.next_turn
+    count = game.players.count
+    last = game.poker_moves.last(count)
+    if last.all? { |move| move.move == 'call' }
+      game.next_betting_round
+      if round = 1
+        ActionCable.server.broadcast "room_channel_#{room}",
+                                      call: true                               
+      elsif round = 2
+        ActionCable.server.broadcast "room_channel_#{current_user.id}",
+                                      card_turn: true
+      elsif round = 3
+        ActionCable.server.broadcast "room_channel_#{current_user.id}",
+                                      river: true
+      end
+    else
+      ActionCable.server.broadcast "room_channel_#{current_user.id}",
+                                    turn: false
+      ActionCable.server.broadcast "room_channel_#{game.players[game.current_turn]}",
+                                    turn: true                          
+    end
   end
 
-  def get_messages 
-    @messages = Message.for_display 
-    @message = current_user.messages.build 
+  def fold
   end
+
+  def flop
+    room = current_user.current_room
+    game = PokerGame.find_by(poker_room_id: room)
+    @flop = [Card.find(game.flop_1), Card.find(game.flop_2), Card.find(game.flop_3)]
+  end
+
+  def card_turn
+    room = current_user.current_room
+    game = PokerGame.find_by(poker_room_id: room)
+    @turn = Card.find(game.flop_4)
+  end
+
+  def river
+    room = current_user.current_room
+    game = PokerGame.find_by(poker_room_id: room)
+    @river = Card.find(game.flop_5)
+  end
+
+  # def get_messages 
+  #   @messages = Message.for_display 
+  #   @message = current_user.messages.build 
+  # end
 
   private
-    def current_game
-      $games[current_user.current_room]
-    end
-
     def current_room
-      current_user.current_room
-    end
+      PokerRoom.find_by(id: current_user.current_room) 
+    end 
 
-    def current_round
-      id = PokerRoom.find(current_room).current_round
-      $games[id]
+    def current_game
+      PokerGame.find_by(poker_room_id: current_room.current_poker_game_id)
     end
 
     def player_bet
       current_round.current_player(current_user.id).current_bet
     end
 end
-
-class PokerPlayer
-  attr_accessor :hand, :hand_value, :current_bet, :turn
-  attr_reader :name, :user_id
-
-  def initialize(user_id, hand)
-    @name = name
-    @hand = PokerHand.new(hand)
-    @user_id = user_id
-    @current_bet = 0
-    @round_bet = 0
-    @turn = false
-  end  
-end
-
-class PokerGame
-  attr_accessor :human, :dealer, :turn_marker
-  attr_reader :winner, :flop, :lobby, :round, :big_blind
-
-  def initialize(players, room)
-    @big_blind = 100
-    @betting_round = 1
-    @deck = Card.all.to_a
-    @deck.shuffle!
-    @flop = @deck.pop(5)
-    @lobby = [PokerPlayer.new(players[0],@deck.pop(2)), PokerPlayer.new(players[1],@deck.pop(2))]
-    @turn_marker = 0
-    @winner = nil
-    @round = PokerRound.new(player1: players[0], player2: players[1], poker_room_id: room)
-    if @round.save 
-      $games[@round.id] = self
-      PokerRoom.find(room).update!(current_round: @round.id)
-    end
-  end
-
-  def current_player(current_user_id)
-    @lobby.select { |player| player.user_id == current_user_id }.first
-  end
-
-  def current_players_user_id
-    @lobby[@turn_marker].user_id
-  end
-
-  def next_turn
-    last_idx = @lobby.length - 1
-    if (@turn_marker + 1) > last_idx
-      @turn_marker = 0
-    else
-      @turn_marker += 1
-    end
-    @lobby[@turn_marker].turn = true
-  end 
-end
   
-class PokerHand
-  attr_reader :hand
-
-  def initialize(cards)
-    @hand = cards
-  end
-
-  def evaluate
-    case 
-    when royal_flush?     then 'Royal flush'
-    when straight_flush?  then 'Straight flush'
-    when four_of_a_kind?  then 'Four of a kind'
-    when full_house?      then 'Full house'
-    when flush?           then 'Flush'
-    when straight?        then 'Straight'
-    when three_of_a_kind? then 'Three of a kind'
-    when two_pair?        then 'Two pair'
-    when pair?            then 'Pair'
-    else                       'High card'
-    end
-  end
-
-  private
-    def suit_arr
-      hand.map { |card| card.suit }
-    end
-
-    def rank_arr
-      hand.map { |card| card.rank }
-    end
-
-    def ace_two_straight?
-      (['Ace', 2, 3, 4, 5] - rank_arr).empty?
-    end
-
-    def sort_hand
-      hand.sort_by { |card| card.id }
-    end
-
-    def royal_flush?
-      flush? && %w(A Q K J 10) - rank_arr.empty?
-    end
-
-    def straight_flush?
-      flush? && straight?
-    end
-
-    def n_of_a_kind?(n)
-      rank_arr.any? { |card| rank_arr.count(card) == n }
-    end
-
-    def four_of_a_kind?
-      n_of_a_kind?(4)
-    end
-
-    def full_house?
-      n_of_a_kind?(3) && n_of_a_kind?(2)
-    end
-
-    def flush?
-      suit_arr.uniq.size == 1
-    end
-
-    def straight?
-      sort_hand.last.straight_id - sort_hand.first.straight_id == 4
-    end
-
-    def three_of_a_kind?
-      n_of_a_kind?(3)
-    end
-
-    def two_pair?
-      rank_arr.uniq.count == 3
-    end
-
-    def pair?
-      rank_arr.uniq.count == 4
-    end
-end
