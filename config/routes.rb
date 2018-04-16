@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get '/users/online' => 'users#online'
   get '/poker' => 'poker#show'
   get '/flop' => 'poker#flop'
+  get '/turn' => 'poker#card_turn'
+  get '/river' => 'poker#river'
   get '/new-game' => 'poker#create'
   get '/search' => 'search#index'
   get '/friends' => 'friends#index'

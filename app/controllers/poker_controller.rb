@@ -48,8 +48,10 @@ class PokerController < ApplicationController
       bet = params[:bet].to_i
       sum = game.pot + bet
       game.update!(pot: sum)
-      ActionCable.server.broadcast "room_channel_#{room}",
-                                    pot: game.pot 
+      game.players.each do |player|
+        ActionCable.server.broadcast "room_channel_#{player}",
+                                      pot: game.pot
+      end
       PokerMove.create(user_id: current_user.id, poker_game_id: game.id, betting_round: round.id,
         move: 'raise', raise_amt: bet)
     else 
@@ -69,23 +71,34 @@ class PokerController < ApplicationController
     game = PokerGame.find_by(poker_room_id: room)
     round = game.current_betting_round
     PokerMove.create(user_id: current_user.id, poker_game_id: game.id, betting_round: round.id,
-        move: 'call', raise_amt: 0) 
+                     move: 'call', raise_amt: 0) 
     caller_idx = game.current_turn
     game.next_turn
     count = game.players.count
     last = game.poker_moves.last(count)
     if last.all? { |move| move.move == 'call' }
-      game.next_betting_round
-      if round = 1
-        ActionCable.server.broadcast "room_channel_#{room}",
-                                      call: true                               
-      elsif round = 2
-        ActionCable.server.broadcast "room_channel_#{current_user.id}",
-                                      card_turn: true
-      elsif round = 3
-        ActionCable.server.broadcast "room_channel_#{current_user.id}",
-                                      river: true
+      case round.round_number
+      when 1
+        game.players.each do |player|
+          ActionCable.server.broadcast "room_channel_#{player}",
+                                        call: true
+        end
+        ActionCable.server.broadcast "room_channel_#{game.players[current_user.id]}",
+                                      turn: false                            
+      when 2
+        game.players.each do |player|
+          ActionCable.server.broadcast "room_channel_#{player}",
+                                        card_turn: true
+        end
+      when 3
+        game.players.each do |player|
+          ActionCable.server.broadcast "room_channel_#{player}",
+                                        river: true
+        end
+        ActionCable.server.broadcast "room_channel_#{game.players[game.current_turn]}",
+                                    turn: true                                
       end
+      game.next_betting_round
     else
       ActionCable.server.broadcast "room_channel_#{current_user.id}",
                                     turn: false

@@ -17,11 +17,19 @@ App.room = App.cable.subscriptions.create("RoomChannel", {
         console.log('revealing!');
         $('.wait').css('visibility', 'hidden');
       } else if (data.call == true) {
-        $('.wait').css('visibility', 'visible');
+        // $('.wait').css('visibility', 'visible');
         $.ajax({
           url: "/flop"
         });
-      } 
+      } else if (data.card_turn == true) {
+        $.ajax({
+          url: "/turn"
+        });
+      } else if (data.river == true) {
+        $.ajax({
+          url: "/river"
+        });
+      }
   }
 });
 

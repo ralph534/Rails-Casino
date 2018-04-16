@@ -6,12 +6,15 @@
   position: absolute;
   text-align: center;
   width: 100%;
-  font-size: 1.8rem;
+  font-size: 2.4rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
 }
 
 
 .poker-table {
-
+  width: 100%;
 }
 
 .wait {
@@ -28,7 +31,8 @@
 }
 
 #poker-footer-wrap {
-  /*visibility: hidden;*/
+  background-color: black;
+  
 }
 
 .poker-hand {
@@ -40,16 +44,17 @@
 
 .flop {
   position: absolute;
-  left: 50%;
-  top: 30rem;
+  left: 45%;
+  top: 35rem;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  grid-gap: 1.5rem;
 }
 
 .poker-hand img,
 .flop img {
 box-shadow: 6px 6px 4px black;
-  height: 8rem;
+  height: 14rem;
   moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none; /* From IE10 only */
