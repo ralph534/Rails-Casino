@@ -1,6 +1,6 @@
 class PokerController < ApplicationController
   respond_to :html, :js
-  # before_action :get_messages
+  before_action :show_players
 
   def create
     invitation = Invitation.find(params[:invitation])
@@ -26,10 +26,11 @@ class PokerController < ApplicationController
   end
 
   def show
+    get_messages
     room = current_user.current_room
     # current_user.update!(current_room: 
     game = PokerGame.find_by(poker_room_id: room)
-    current_user.update!(poker_game: game)
+    current_user.update_attribute(:poker_game, game)
     # @flop = [game.flop_1, game.flop_2, game.flop_3,
     #          game.flop_4, game.flop_5]
     # @lobby = game.players
@@ -37,6 +38,8 @@ class PokerController < ApplicationController
     user_hand = game.poker_hands.find_by(user_id: current_user.id)
     @cards = [Card.find(user_hand.card1_id), Card.find(user_hand.card2_id)]
     @current_user_turn = current_user.turn
+    @pot = game.pot
+    flop if game.current_betting_round.round_number > 1
   end
 
   def bet
@@ -128,12 +131,20 @@ class PokerController < ApplicationController
     @river = Card.find(game.flop_5)
   end
 
-  # def get_messages 
-  #   @messages = Message.for_display 
-  #   @message = current_user.messages.build 
-  # end
+  def get_messages 
+     @messages = Message.for_display 
+     @message = current_user.messages.build 
+  end
 
   private
+    def show_players
+      room = current_user.current_room
+      game = PokerGame.find_by(poker_room_id: room)
+      @players = []
+      game.players.each { |player| @players << User.find(player).username }
+      @players
+    end
+
     def current_room
       PokerRoom.find_by(id: current_user.current_room) 
     end 

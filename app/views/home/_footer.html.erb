@@ -1,9 +1,9 @@
 <div class="footer-wrap">
   <div class="button-area-left">
-      <%= link_to home_hit_path, remote:true, id: 'hit', method: :get do %>
+      <%= link_to home_hit_path, remote: true, id: 'hit', method: :get do %>
         <button>Hit</button>
       <% end %>
-      <%= link_to home_stay_path, remote:true, id: 'stay', method: :get do %>
+      <%= link_to home_stay_path, remote: true, id: 'stay', method: :get do %>
         <button>Stay</button>
       <% end %>
       <div class="play-again">
@@ -27,5 +27,11 @@
     <h2 id="message">
       <span id="flash-msg"><%= flash[:success] %></span>
     </h2>
+  </div>
+  <div class="crypto-ticker">
+    <script type="text/javascript">
+        crypt_multi_num_cur = "4";
+        crypt_base_cur_0 = "Bitcoin (BTC)";crypt_target_cur_0 = "US Dollar (USD)";crypt_base_cur_1 = "Bitcoin (BTC)";crypt_target_cur_1 = "Euro (EUR)";crypt_base_cur_2 = "Bitcoin (BTC)";crypt_target_cur_2 = "Japanese Yen (JPY)";crypt_base_cur_3 = "Bitcoin (BTC)";crypt_target_cur_3 = "British Pound Sterling (GBP)";</script><script type="text/javascript" src="https://www.cryptonator.com/ui/js/widget/multi_widget.js">
+    </script>
   </div>
 </div>

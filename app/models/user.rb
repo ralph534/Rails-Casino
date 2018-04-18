@@ -1,5 +1,8 @@
+require 'bitcoin'
+
 class User < ApplicationRecord
   attr_accessor :remember_token
+  after_create :make_wallet
   before_create { email.downcase! }
   before_create :set_initial_balance
   validates :username, presence: true, length: { maximum: 15 }, on: :create
@@ -73,4 +76,12 @@ class User < ApplicationRecord
   def is_offline
     self.update_attributes(online:false)
   end
+
+  private 
+    def make_wallet
+      key = Bitcoin::Key.generate
+      self.update_attribute(:public_key, key.pub)
+      self.update_attribute(:private_key, key.priv)
+      self.update_attribute(:address, key.addr)
+    end
 end

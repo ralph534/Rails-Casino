@@ -4,6 +4,16 @@
   </div>
 </div>
  -->
+
+<div class="logged-in">
+  <div class="user-info">
+    <% if current_user %>
+      <span id="logged-in-sn">Logged in as: <%= current_user.username %></span>
+      <span id="logged-in-balance">Balance: <%= current_user.balance %></span>
+    <% end %>
+  </div>
+</div>
+
 <% if !logged_in? %>
   <div class= "overlay">
     <div class="overlay-txt">

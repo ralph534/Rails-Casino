@@ -1,13 +1,9 @@
-<% if current_user.turn %>
-<div class="wait" style="visibility: hidden">
-<% else %>
-<div class="wait">
-<% end %>
-  Wait your turn!!
+<div class="pot">
+  Pot: <span id="pot"><%= @pot %></span>
 </div>
 
-
-<div class="footer-wrap" id="poker-footer-wrap">
+<div class="poker-footer-wrap" id="poker-footer-wrap">
+  <div class="wait">Wait your turn!</div>
   <div class="button-area-left">
       <%= link_to bet_path, remote:true, id: 'bet', method: :post do %>
         <button>Bet</button>
@@ -31,10 +27,4 @@
       <%= button_to "500", bet_path, remote: true, params: { bet:500 } %>
       <%= button_to "1000", bet_path, remote: true, params: { bet:1000 } %>
     </div>
-  <div class="result">
-    <p id="wager">Current Wager: <span id="current-wager"><%= $wager %></span></p>
-    <h2 id="message">
-      <span id="flash-msg"><%= flash[:success] %></span>
-    </h2>
-  </div>
 </div>

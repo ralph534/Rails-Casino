@@ -5,6 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'bitcoin-ruby'
 gem 'seed_dump'
 gem 'recaptcha', :require => 'recaptcha/rails'
 gem 'bcrypt'

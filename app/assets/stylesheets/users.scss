@@ -67,13 +67,14 @@ header {
 }
 
 .leaderboard {
- display: none;
+  color: black;
+  text-align: center;
 }
 
 table {
   position: absolute;
-  top: 7rem;
-  width: 100%;
+  left: 5.5rem;
+  width: 100vw;
   text-align: center;
   font-size: 1.4rem;
   margin: 0 auto;
@@ -95,6 +96,14 @@ th, td {
 tr:hover {
   background-color: darkgrey;
   color: white;
+}
+
+tr:nth-child(even) {
+  background-color: red;
+}
+
+tr:nth-child(odd) {
+  background-color: white;
 }
 
 tr:first-child:hover {

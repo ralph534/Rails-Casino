@@ -1,7 +1,6 @@
 @import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
 
 .navbar-twitch {
-  background-color: c6ffc6;
   position: fixed;
   top: 0px;
   left: 0px;
@@ -11,7 +10,7 @@
 }
 
 .navbar-inverse {
-   background: linear-gradient(80deg, rgba(0, 0, 0,0.5), rgba(255, 0, 0, 0.8), rgba(127, 0, 0, 0.8)) !important;
+   background: linear-gradient(80deg, rgba(0, 0, 0, 0.75), rgba(255, 0, 0, 0.85), rgba(127, 0, 0, 0.75)) !important;
 }
 
 .navbar {
@@ -20,14 +19,14 @@
 
 .navbar li {
  margin-top: 0.2rem;
- background: linear-gradient(20deg, rgb(255,200,55), orange);
+ background: linear-gradient(20deg, rgb(190,0,0), black);
  border-top: 1px solid black;
  border-bottom: 1px solid black;
  border-radius: 0.2rem;
 }
 
 .navbar li:hover {
-  background: darkgrey;
+  background: red;
 }
 
 svg {

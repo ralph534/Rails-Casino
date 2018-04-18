@@ -1,50 +1,170 @@
-// Place all the styles related to the Poker controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+body {
+  background: linear-gradient(20deg, rgba(255, 255, 255, 0.75), black),
+              url('versace.png') !important;
+}
 
 .pot {
   position: absolute;
+  top: 0;
   text-align: center;
   width: 100%;
-  font-size: 2.4rem;
+  font-size: 2.85rem;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.63);
+  color: white;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.players-chat {
+  background-color: rgba(255, 255, 255, 0.65);
+  position: absolute;
+  bottom: 1rem;
+  left: 5.7rem;
+  width: 25rem;
+  margin: 0 auto;
+  font-weight: 500;
+  border: 0.5px solid lightgrey;
+  border-radius: 0.25rem;
+}
+
+.current-players {
+  border-bottom: 2px solid grey;
+}
+
+.messages {
+  height: 25rem;
+}
+
+#message_content {
+  width: 100%;
+  border: none;
+}
+
+.current-players p {
+  margin: 0;
+  font-size: 1.55rem;
+}
+
+.current-players p:nth-child(odd) {
+  background-color: grey;
   color: white;
 }
 
+.current-players p:nth-child(even) {
+  background-color: white;
+  color: black;
+}
+
+/*.message {
+  position: relative;
+  z-index: 9999;
+  border-radius: 0.5rem;
+  display: none;
+  width: 100vw;
+  height: 10rem;
+  word-spacing: 2rem;
+  background-color: rgba(194, 24, 7, 0.7);
+  color: white;
+  text-align: center;
+}*/
 
 .poker-table {
-  width: 100%;
+  z-index: 9999;
+  margin: 0 auto;
+  width: 100vw;
+  height: 90vh;
+  background: linear-gradient(125deg, green, lightgreen);
+  box-shadow: 3px 3px 3px 3px black;
 }
 
 .wait {
+  visibility: hidden;
   background-color: rgba(0, 0, 0, 0.45);
   z-index: 9999;
   position: absolute;
-  bottom: 0;
-  left: 5.3rem;
-  height: 13rem;
+  height: 15rem;
   width: 100%;
   text-align: center;
   font-size: 5rem;
   color: white;
 }
 
-#poker-footer-wrap {
-  background-color: black;
-  
+.poker-footer-wrap {
+  display: grid;
+  grid-template-columns: 10rem 20rem;
+  grid-gap: 1rem;
+  bottom: 6rem;
+  padding: 1rem;
+/*  width: 60%;*/
+  height: 10rem;
+  position: absolute;
+  left: 40%;
+  margin: 0 auto;
+}
+
+.poker-footer-wrap .wager-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  grid-column-gap: 1rem;
+}
+
+.poker-footer-wrap .wager-buttons input {
+  height: 100%;
+}
+
+.poker-footer-wrap .button-area-left {
+  color: black;
+  display: grid;
+  width: 100%;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.poker-footer-wrap .button-area-left button {
+  background: linear-gradient(20deg, darkgrey, grey);
+  border: none;
+  border-radius: 0.2rem;
+  color: white;
+  width: 100%;
+  font-size: 2.4rem;
+  font-weight: 300rem;
+}
+
+.poker-footer-wrap
+input[type="submit"],
+.poker-footer-wrap button {
+  background: linear-gradient(20deg, darkgrey, grey);
+  border: none;
+  border-radius: 0.2rem;
+  color: white;
+  width: 100%;
+  font-size: 2.4rem;
+  font-weight: 300rem;
+}
+
+.poker-footer-wrap input[type="submit"]:hover,
+.poker-footer-wrap button:hover {
+  background: darkgrey;
 }
 
 .poker-hand {
   display: grid;
   grid-gap: 0.3rem;
   grid-template-columns: 50% 50%;
-  width: 11rem;
+  width: 15rem;
+}
+
+.poker-hand p {
+  font-size: 1.75rem;
+  color: white;
+  font-weight: 500;
+  width: auto;
+  margin: 0 auto;
 }
 
 .flop {
   position: absolute;
-  left: 45%;
+  left: 30%;
   top: 35rem;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -53,8 +173,8 @@
 
 .poker-hand img,
 .flop img {
-box-shadow: 6px 6px 4px black;
-  height: 14rem;
+  box-shadow: 6px 6px 4px black;
+  height: 16rem;
   moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none; /* From IE10 only */

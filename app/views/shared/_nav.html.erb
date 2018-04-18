@@ -2,7 +2,7 @@
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">
-        <span class="small-nav"> <span class="logo"> <B> </span> </span>
+        <span class="small-nav"> <span class="logo"><!--  <B>  --></span> </span>
         <span class="full-nav"> < Bootsnipp > </span>
       </a>
     </div>
@@ -17,12 +17,14 @@
           </a>
         </li>
          <li>
-          <a href="#btc">
+          <%= link_to bitcoin_path, remote: true, method: :get do %>
             <span class="small-nav" data-toggle="tooltip" data-placement="right" title="My BTC"> 
             <i class="fab fa-btc" id="btc"></i> 
             </span>
-            <span class="full-nav">My Bitcoin</span>
-          </a>
+          <span class="full-nav">My Bitcoin</span>
+          <% end %>
+          <div class="bitcoin-address">
+          </div>
         </li>
         <li>
           <a href="#poker">

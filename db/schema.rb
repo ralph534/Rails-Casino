@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180415154117) do
+ActiveRecord::Schema.define(version: 20180417002833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -231,6 +231,9 @@ ActiveRecord::Schema.define(version: 20180415154117) do
     t.bigint "game_id"
     t.boolean "turn", default: false
     t.integer "poker_game"
+    t.string "address"
+    t.string "public_key"
+    t.string "private_key"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["game_id"], name: "index_users_on_game_id"
   end

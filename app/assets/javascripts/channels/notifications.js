@@ -8,10 +8,17 @@ App.notifications = App.cable.subscriptions.create("NotificationsChannel", {
   },
 
   received: function(data) {
-   $('#friend-request-user').append(data.content);
-   $('.incoming-friend-request').fadeIn(3000).fadeOut(6000);
-   $('#friends').fadeTo('slow', 0.3, function(){
-    $(this).css('background-color', 'red');
-   }).fadeTo('slow', 1);
+   if (data.jackpot == true) {
+    $('.coins-video').fadeIn(2000);
+    $('.coins-video video').trigger('play');
+    $('.coins-video').fadeOut(6500);
+   } else if (data.content) {
+     console.log('received f request');
+     $('#friend-request-user').append(data.content);
+     $('.incoming-friend-request').fadeIn(3000).fadeOut(6000);
+     $('#friends').fadeTo('slow', 0.3, function(){
+      $(this).css('background-color', 'red');
+     }).fadeTo('slow', 1);
+    }
   }
 });

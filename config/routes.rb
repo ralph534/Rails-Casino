@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'home/stay' => 'home#stay'
   get 'home/index' => 'home#index'
   get '/login' => 'sessions#new'
-  get '/users/leaderboard' => 'users#leaderboard'
+  get '/leaderboard' => 'users#leaderboard'
   get '/users/online' => 'users#online'
   get '/poker' => 'poker#show'
   get '/flop' => 'poker#flop'
@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get '/friends/destroy'
   get '/pvt-msg' => 'private_messages#index'
   get '/new-pvt-msg' => 'private_messages#new'
+  get '/bitcoin' => 'bitcoin#index'
 
   post '/register' => 'users#create'
   post '/login' => 'sessions#create'

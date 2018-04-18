@@ -29,6 +29,10 @@ class HomeController < ApplicationController
     dealer_cards = game.hands.for_dealer.cards
     @cards = dealer_cards[1..-1]
     @winner = game.find_winner
+    if @winner == "BLACKJACK! You win!" || @winner == "You win!"
+      ActionCable.server.broadcast "notifications_channel_#{current_user.id}",
+                                    jackpot: true
+    end
   end
 
   def wager
