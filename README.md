@@ -1,24 +1,6 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A work in progress.. This casino auto-generates user-specific bitcoin wallets for users using Rails model callbacks. 
+The site utilizes Actioncable to allow for instant friend/game requests, chat, and gameplay. 
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Users can play Blackjack against the house or create private poker rooms that support up to 8 players. 
